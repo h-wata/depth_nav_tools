@@ -1,7 +1,14 @@
 <launch>
-    <node name="cliff_detector" pkg="cliff_detector" type="cliff_detector" >
-	  	<remap from="image" to="/camera/depth/image_raw"/>
-	  	<remap from="camera_info" to="/camera/depth/camera_info"/>
+ <!-- <node pkg="nodelet" type="nodelet" name="convert_manager"  args="manager"/> -->
+ <!-- <node pkg="nodelet" type="nodelet" name="convert_image"                     -->
+	<!-- args="load depth_image_proc/convert_metric convert_manager">                -->
+ <!--    <remap from="image_raw" to="pico_flexx/image_depth"/>                    -->
+	<!-- <remap from="image" to="depth_image"/>                                      -->
+	<!-- </node>                                                                     -->
+    <node name="cliff_detector" pkg="cliff_detector" type="cliff_detector" output="screen" >
+        <remap from="image" to="depth_image"/>
+        <remap from="camera_info" to="/pico_flexx/camera_info"/>
+        <remap from="cliff_detector/points" to="downstairs_detector/points"/>
         <rosparam command="load" file="$(find cliff_detector)/config/params.yaml" />
 	</node>
 </launch>

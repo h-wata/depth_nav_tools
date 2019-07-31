@@ -138,11 +138,12 @@ public: // Public methods
    * @param u
    */
   void setCamModelUpdate (const bool u) { cam_model_update_ = u; }
+  void setInverted (const bool u) { inverted_ = u; }
   /**
    * @brief setUsedDepthHeight
    * @param height
    */
-  void setUsedDepthHeight(const unsigned int height);
+  void setUsedDepthHeight(const unsigned int height, const unsigned int height_min);
   /**
    * @brief setBlockSize sets size of square block (subimage) used in cliff detector
    *
@@ -251,7 +252,9 @@ private: // Private fields
   float        sensor_tilt_angle_;    ///< Sensor tilt angle (degrees)
   bool         publish_depth_enable_; ///< Determines if depth should be republished
   bool         cam_model_update_;     ///< Determines if continuously cam model update required
+  bool         inverted_;             ///< Determines if depth_image is inverted //add by hwata
   unsigned int used_depth_height_;    ///< Used depth height from img bottom (px)
+  unsigned int used_depth_height_min_;    ///< Used depth height from img bottom (px)
   unsigned int block_size_;           ///< Square block (subimage) size (px).
   unsigned int block_points_thresh_;  ///< Threshold value of points in block to admit stairs
   unsigned int depth_image_step_row_; ///< Rows step in depth processing (px).

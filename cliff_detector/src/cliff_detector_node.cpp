@@ -133,8 +133,8 @@ void CliffDetectorNode::reconfigureCb(
   detector_.setSensorTiltAngle(config.sensor_tilt_angle);
   detector_.setPublishDepthEnable(config.publish_depth);
   detector_.setCamModelUpdate(config.cam_model_update);
-
-  detector_.setUsedDepthHeight((unsigned int)config.used_depth_height);
+  detector_.setInverted(config.inverted);
+  detector_.setUsedDepthHeight((unsigned int)config.used_depth_height, (unsigned int)config.used_depth_height_min); // add used_depth_height_min by hwata
   detector_.setBlockSize(config.block_size);
   detector_.setBlockPointsThresh(config.block_points_thresh);
   detector_.setDepthImgStepRow(config.depth_img_step_row);

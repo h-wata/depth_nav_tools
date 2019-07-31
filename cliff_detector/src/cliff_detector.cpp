@@ -139,7 +139,7 @@ void CliffDetector::setSensorTiltAngle (const float angle)
 }
 
 //=================================================================================================
-void CliffDetector::setUsedDepthHeight(const unsigned int height)
+void CliffDetector::setUsedDepthHeight(const unsigned int height, const unsigned int height_min)
 {
   if( height > 0)
     used_depth_height_ = height;
@@ -147,6 +147,14 @@ void CliffDetector::setUsedDepthHeight(const unsigned int height)
   {
     used_depth_height_ = 100;
     ROS_ERROR("Incorrect value of used depth height parameter. Set default value: 100.");
+  }
+  // add by hwata
+  if( height_min >= 0)
+    used_depth_height_min_ = height_min;
+  else
+  {
+    used_depth_height_min_ = 10;
+    ROS_ERROR("Incorrect value of used depth height min parameter. Set default value: 10.");
   }
 }
 
@@ -257,8 +265,14 @@ void CliffDetector::calcDeltaAngleForImgRows(double vertical_fov)
   delta_row_.resize(img_height);
 
   // Angle between ray and optical center
-  for(unsigned int i = 0; i < img_height; i++)
-    delta_row_[i] = vertical_fov * (i - camera_model_.cy() - 0.5) / ((double)img_height - 1);
+  for (unsigned int i = 0; i < img_height; i++)
+  {
+    if (inverted_)  // add by hwata
+        delta_row_[i] = - vertical_fov * (i - camera_model_.cy() - 0.5) / ((double)img_height - 1);
+    else {
+        delta_row_[i] =  vertical_fov * (i - camera_model_.cy() - 0.5) / ((double)img_height - 1);
+    }
+  }
 }
 
 //=================================================================================================
@@ -328,6 +342,7 @@ void CliffDetector::findCliffInDepthImage( const sensor_msgs::ImageConstPtr &dep
 
   const unsigned int block_cols_nr = img_width / block_size_;
   const unsigned int block_rows_nr = used_depth_height_ / block_size_;
+  const unsigned int block_rows_nr_min = used_depth_height_min_ / block_size_;
 
   const int ground_margin_mm = ground_margin_ * 1000;
   const unsigned int range_min_mm = range_min_ * 1000;
@@ -367,7 +382,8 @@ void CliffDetector::findCliffInDepthImage( const sensor_msgs::ImageConstPtr &dep
   center_points[3] = (c-1)*block_size_ + c ;
 
   // Loop over each block row in image, bj - block column
-  for (unsigned int bj = 0; bj < block_rows_nr; ++bj)
+  // for (unsigned int bj = 0; bj < block_rows_nr; ++bj)
+  for (unsigned int bj = block_rows_nr_min; bj < block_rows_nr; ++bj)
   {
     // Loop over each block column in image, bi - block row
     for (unsigned int bi = 0; bi < block_cols_nr; ++bi)
